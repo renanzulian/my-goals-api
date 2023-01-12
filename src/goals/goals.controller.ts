@@ -23,12 +23,12 @@ export class GoalsController {
   }
 
   @Get()
-  listGoals(@Req() request) {
-    return this.goalsService.findByUserId(request.userId);
+  async listGoals(@Req() request) {
+    return await this.goalsService.findByUserId(request.userId);
   }
 
   @Delete(':id')
-  delete(@Req() request, @Param('id') id) {
+  async delete(@Req() request, @Param('id') id) {
     this.goalsService.delete(id);
   }
 }

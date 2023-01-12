@@ -1,16 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { User, UserRequest } from './user.model';
 import { Encryption } from 'src/auth/encryption';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
   private users: User[] = [];
   private counter = 1000;
 
-  constructor(private readonly encryption: Encryption) {}
+  constructor(
+    private readonly encryption: Encryption,
+    @Inject('USER_REPOSITORY')
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  create(user: UserRequest): Promise<User> {
-    if (this.isEmailPersisted(user.email)) {
+  async create(user: UserRequest): Promise<User> {
+    if (await this.isEmailPersisted(user.email)) {
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
     const newUser = {
@@ -18,25 +23,32 @@ export class UserService {
       password: this.encryptPassword(user.password),
       id: this.counter++,
     };
-    this.users.push(newUser);
-    return Promise.resolve(newUser);
+    const persistedUser = await this.userRepository.save(newUser);
+    return persistedUser;
   }
 
-  private isEmailPersisted(email: string): boolean {
-    return this.users.some((user) => user.email === email);
+  private async isEmailPersisted(email: string): Promise<boolean> {
+    const user = await this.findByEmail(email);
+    return !!user;
   }
 
   private encryptPassword(password: string): string {
     return this.encryption.encryptPassword(password);
   }
 
-  findByEmail(email: string): Promise<User> {
-    const user = this.users.find((user) => user.email === email);
-    return Promise.resolve(user);
+  async findByEmail(email: string): Promise<User> {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
   }
 
-  findById(id: number): Promise<User> {
-    const user = this.users.find((user) => user.id === id);
-    return Promise.resolve(user);
+  async findById(id: number): Promise<User> {
+    return await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
   }
 }
