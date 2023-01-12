@@ -2,10 +2,8 @@
 
 The API that gonna help you to achieve your goals.
 
-## Objective
+## Warning
 
-Learn how to keep an API safe and detect risks based on the OWASP Top 10.
+This isn't a real project but could be. There are many projects like this one with many vulnerabilities and problems in production. Maybe this project could be a good example to learn how to fix vulnerabilities.
 
-## How to learn
-
-The main branch has all the vulnerabilities. You can check the PRs to see how to fix them.
+Do you want to learn about secure development? Check the PRs and learn how to fix the vulnerabilities.
