@@ -28,8 +28,8 @@ export class GoalsService {
     );
   }
 
-  delete(id: any): void {
+  delete(id: number, userId: number): void {
     this.entityManager.query(`DELETE FROM
-    goal WHERE id = ${id}`);
+    goal WHERE id = ${id} AND userId = ${userId}`);
   }
 }
