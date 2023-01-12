@@ -29,6 +29,6 @@ export class GoalsController {
 
   @Delete(':id')
   async delete(@Req() request, @Param('id') id) {
-    this.goalsService.delete(id);
+    this.goalsService.delete(id, request.userId);
   }
 }
