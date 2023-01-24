@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { createHash } from 'crypto';
+import * as bcrypt from 'bcrypt';
+
+const BCRYPT_SALT = 11;
 
 @Injectable()
 export class Encryption {
-  encryptPassword(password: string): string {
-    return createHash('sha256').update(password).digest('hex');
+  async encryptPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, BCRYPT_SALT);
   }
 
-  comparePassword(password: string, encryptedPassword: string): boolean {
-    return this.encryptPassword(password) === encryptedPassword;
+  async comparePassword(
+    password: string,
+    encryptedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, encryptedPassword);
   }
 }
