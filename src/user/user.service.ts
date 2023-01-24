@@ -20,7 +20,7 @@ export class UserService {
     }
     const newUser = {
       ...user,
-      password: this.encryptPassword(user.password),
+      password: await this.encryptPassword(user.password),
       id: this.counter++,
     };
     const persistedUser = await this.userRepository.save(newUser);
@@ -32,7 +32,7 @@ export class UserService {
     return !!user;
   }
 
-  private encryptPassword(password: string): string {
+  private encryptPassword(password: string): Promise<string> {
     return this.encryption.encryptPassword(password);
   }
 
