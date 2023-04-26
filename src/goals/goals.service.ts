@@ -29,7 +29,12 @@ export class GoalsService {
   }
 
   delete(id: number, userId: number): void {
-    this.entityManager.query(`DELETE FROM
-    goal WHERE id = ${id} AND userId = ${userId}`);
+    this.entityManager
+      .getRepository(GoalEntity)
+      .createQueryBuilder('goal')
+      .innerJoinAndSelect('goal.user', 'user')
+      .where('goal.id = :goalId AND user.id = :userId', { goalId: id, userId })
+      .delete()
+      .execute();
   }
 }
